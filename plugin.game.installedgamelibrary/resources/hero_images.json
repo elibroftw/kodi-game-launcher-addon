@@ -2,15 +2,11 @@
   "games": [
     {
       "title": "Dune: Awakening",
-      "aliases": ["Dune Awakening"],
+      "aliases": [
+        "Dune Awakening"
+      ],
       "steam_app_id": "1172710",
       "hero_url": "https://duneawakening.com/wp-content/uploads/Paralax-Background-2-1.jpg"
-    },
-    {
-      "title": "Dune: Spice Wars",
-      "aliases": ["Dune Spice Wars"],
-      "steam_app_id": "1605220",
-      "hero_url": "https://store-images.s-microsoft.com/image/apps.13598.13993061156496216.c5c83445-c83d-441f-8d79-a05fa134dcd7.fa11b3c9-0b58-49a3-ba97-1fe6290edf6a?q=90&w=480&h=270"
     },
     {
       "title": "Factorio",
@@ -46,8 +42,195 @@
     },
     {
       "title": "Shadow of the Colossus",
-      "aliases": ["Shadow of the Collosus"],
+      "aliases": [
+        "Shadow of the Collosus"
+      ],
       "hero_url": "https://images.hdqwalls.com/wallpapers/shadow-of-the-colossus-8k-ao.jpg"
+    },
+    {
+      "title": "Fortnite",
+      "aliases": [
+        "Fortnite Battle Royale"
+      ],
+      "hero_url": "https://gmedia.playstation.com/is/image/SIEPDC/Fortnite-CH7S5-homepage-hero-desktop-01-09nov26?wid=1920&fmt=jpeg&qlt=90",
+      "source_page": "https://www.playstation.com/en-us/games/fortnite/"
+    },
+    {
+      "title": "Call of Duty: Warzone",
+      "aliases": [
+        "Call of Duty Warzone",
+        "Warzone",
+        "Warzone 2.0"
+      ],
+      "steam_app_id": "1962663",
+      "hero_url": "https://gmedia.playstation.com/is/image/SIEPDC/cod-warzone-mw4-evergreen-hero-desktop-03nov26?wid=1920&fmt=jpeg&qlt=90",
+      "source_page": "https://www.playstation.com/en-us/games/call-of-duty-warzone/"
+    },
+    {
+      "title": "Alan Wake 2",
+      "aliases": [
+        "Alan Wake II"
+      ],
+      "hero_url": "https://image.api.playstation.com/vulcan/ap/rnd/202305/2420/2b117db6108244a85769f8009df39f8006b226d8a2831b3a.jpg",
+      "source_page": "https://www.playstation.com/en-us/games/alan-wake-2/"
+    },
+    {
+      "title": "Minecraft",
+      "aliases": [
+        "Minecraft Java Edition",
+        "Minecraft Bedrock Edition"
+      ],
+      "hero_url": "https://gmedia.playstation.com/is/image/SIEPDC/minecraft-hero-desktop-01-en-06sep24?wid=1920&fmt=jpeg&qlt=90",
+      "source_page": "https://www.playstation.com/en-us/games/minecraft/"
+    },
+    {
+      "title": "Death Stranding 2: On the Beach",
+      "aliases": [
+        "Death Stranding 2",
+        "Death Stranding 2 On the Beach"
+      ],
+      "steam_app_id": "3280350",
+      "hero_url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3280350/702c9ed8dc25f26be07539cd5cfb9f08046d210a/ss_702c9ed8dc25f26be07539cd5cfb9f08046d210a.1920x1080.jpg?t=1774022345",
+      "source_page": "https://store.steampowered.com/app/3280350/"
+    },
+    {
+      "title": "Bloodborne",
+      "hero_url": "https://image.api.playstation.com/vulcan/img/rnd/202010/2614/O2Z66UWrZH8zcejxopwWxhGu.png",
+      "source_page": "https://www.playstation.com/en-us/games/bloodborne/"
+    },
+    {
+      "title": "The Last Guardian",
+      "hero_url": "https://image.api.playstation.com/vulcan/img/rnd/202010/2817/ZBNHoMPR6o6ipGnwPcpmzj91.png",
+      "source_page": "https://www.playstation.com/en-us/games/the-last-guardian/"
+    },
+    {
+      "title": "inFAMOUS Second Son",
+      "aliases": [
+        "inFAMOUS: Second Son"
+      ],
+      "hero_url": "https://image.api.playstation.com/vulcan/img/rnd/202010/2122/LbSCli0LHy5Ou5yRfts6X7UB.png",
+      "source_page": "https://www.playstation.com/en-us/games/infamous-second-son/"
+    },
+    {
+      "title": "Ratchet & Clank (2016)",
+      "aliases": [
+        "Ratchet and Clank 2016"
+      ],
+      "hero_url": "https://gmedia.playstation.com/is/image/SIEPDC/ratchet-and-clank-hero-01-en-23feb21?wid=1920&fmt=jpeg&qlt=90",
+      "source_page": "https://www.playstation.com/en-us/games/ratchet-and-clank/"
+    },
+    {
+      "title": "The Legend of Zelda: Breath of the Wild",
+      "aliases": [
+        "The Legend of Zelda Breath of the Wild",
+        "Zelda Breath of the Wild",
+        "Breath of the Wild"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000000025/7137262b5a64d921e193653f8aa0b722925abc5680380ca0e18a5cfd91697f58",
+      "source_page": "https://www.nintendo.com/us/store/products/the-legend-of-zelda-breath-of-the-wild-switch/"
+    },
+    {
+      "title": "The Legend of Zelda: Tears of the Kingdom",
+      "aliases": [
+        "The Legend of Zelda Tears of the Kingdom",
+        "Zelda Tears of the Kingdom",
+        "Tears of the Kingdom"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000063714/fb30eab428df3fc993b41c76e20f72e4d76d49734d17d31996b5ab61c414b117",
+      "source_page": "https://www.nintendo.com/us/store/products/the-legend-of-zelda-tears-of-the-kingdom-switch/"
+    },
+    {
+      "title": "The Legend of Zelda: Link's Awakening (2019)",
+      "aliases": [
+        "The Legend of Zelda Links Awakening",
+        "Link's Awakening (Switch)",
+        "Zelda Links Awakening"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000020033/df825d5fc6747b66b051f5d3ba6a412fe625ea7878b6a10c93bb8312195682b1",
+      "source_page": "https://www.nintendo.com/us/store/products/the-legend-of-zelda-links-awakening-switch/"
+    },
+    {
+      "title": "Super Mario Odyssey",
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000001130/c42553b4fd0312c31e70ec7468c6c9bccd739f340152925b9600631f2d29f8b5",
+      "source_page": "https://www.nintendo.com/us/store/products/super-mario-odyssey-switch/"
+    },
+    {
+      "title": "Super Mario Bros. Wonder",
+      "aliases": [
+        "Super Mario Bros Wonder"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000068688/87e8aa5f1fdc950b88eae7d7c62ed185c8a6373c845090bbdb2e2cf039b38da1",
+      "source_page": "https://www.nintendo.com/us/store/products/super-mario-bros-wonder-switch/"
+    },
+    {
+      "title": "Mario Kart 8 Deluxe",
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000000153/de697f487a36d802dd9a5ff0341f717c8486221f2f1219b675af37aca63bc453",
+      "source_page": "https://www.nintendo.com/us/store/products/mario-kart-8-deluxe-switch/"
+    },
+    {
+      "title": "Super Smash Bros. Ultimate",
+      "aliases": [
+        "Super Smash Bros Ultimate"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000012332/ac4d1fc9824876ce756406f0525d50c57ded4b2a666f6dfe40a6ac5c3563fad9",
+      "source_page": "https://www.nintendo.com/us/store/products/super-smash-bros-ultimate-switch/"
+    },
+    {
+      "title": "Metroid Dread",
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000042924/4f2c683f0196210ec212a2ab8bf6952223c0b88e827b820953407a2ba61c9cb2",
+      "source_page": "https://www.nintendo.com/us/store/products/metroid-dread-switch/"
+    },
+    {
+      "title": "Metroid Prime Remastered",
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000063709/32b85837beea0eee31220a59e247219662de4011f7a8c18fce61cf99a4933eb7",
+      "source_page": "https://www.nintendo.com/us/store/products/metroid-prime-remastered-switch/"
+    },
+    {
+      "title": "Pokémon Legends: Arceus",
+      "aliases": [
+        "Pokemon Legends Arceus"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000039945/dcb496d7cf954c7eb51ab2e5d0c27918fb7f055e50f4e902135bd4a70a44b491",
+      "source_page": "https://www.nintendo.com/us/store/products/pokemon-legends-arceus-switch/"
+    },
+    {
+      "title": "Animal Crossing: New Horizons",
+      "aliases": [
+        "Animal Crossing New Horizons"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000027619/9989957eae3a6b545194c42fec2071675c34aadacd65e6b33fdfe7b3b6a86c3a",
+      "source_page": "https://www.nintendo.com/us/store/products/animal-crossing-new-horizons-switch/"
+    },
+    {
+      "title": "Kirby and the Forgotten Land",
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000046405/d1cf83dea46094b85247f40ca30ea4557730a319be0bfe544a4fa929144cf6c2",
+      "source_page": "https://www.nintendo.com/us/store/products/kirby-and-the-forgotten-land-switch/"
+    },
+    {
+      "title": "Luigi's Mansion 3",
+      "aliases": [
+        "Luigis Mansion 3"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000001620/2b166fb3197dacfde1d939acd6a976b9fbe3b1a32c54f9f0d2c8d23efb22412d",
+      "source_page": "https://www.nintendo.com/us/store/products/luigis-mansion-3-switch/"
+    },
+    {
+      "title": "Fire Emblem: Three Houses",
+      "aliases": [
+        "Fire Emblem Three Houses"
+      ],
+      "hero_url": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto/f_auto/dpr_2.0/store/software/switch/70010000007606/c499fdc86779ca95e61daed1f94288a245d196360d278138e56d44097d1a3878",
+      "source_page": "https://www.nintendo.com/us/store/products/fire-emblem-three-houses-switch/"
+    },
+    {
+      "title": "Grand Theft Auto VI",
+      "aliases": [
+        "GTA VI",
+        "GTA 6",
+        "Grand Theft Auto 6"
+      ],
+      "hero_url": "https://gmedia.playstation.com/is/image/SIEPDC/Grand-Theft-Auto-VI-pre-order-hero-desktop-03-19jun25$en?wid=2400&fmt=jpeg&qlt=90",
+      "source_page": "https://www.playstation.com/en-us/games/grand-theft-auto-vi/"
     }
   ]
 }

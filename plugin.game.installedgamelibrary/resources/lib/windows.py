@@ -300,6 +300,42 @@ def xbox_artwork(cache):
     return {key: str(path) for key, path in outputs.items() if is_file(path)}
 
 
+XBOX_BACKDROP = r"""
+$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Drawing
+try {
+    $logo = [Drawing.Image]::FromFile($payload.logo)
+    $bitmap = [Drawing.Bitmap]::new(1920, 1080)
+    $graphics = [Drawing.Graphics]::FromImage($bitmap)
+    $frame = [Drawing.Rectangle]::new(0, 0, 1920, 1080)
+    $gradient = [Drawing.Drawing2D.LinearGradientBrush]::new(
+        $frame, [Drawing.Color]::FromArgb(7, 21, 13), [Drawing.Color]::FromArgb(16, 73, 29), 35.0)
+    $graphics.FillRectangle($gradient, $frame)
+    $graphics.InterpolationMode = [Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+    $scale = 720.0 / [Math]::Max($logo.Width, $logo.Height)
+    $width = [int]($logo.Width * $scale)
+    $height = [int]($logo.Height * $scale)
+    $graphics.DrawImage($logo, [int]((1920 - $width) / 2), [int]((1080 - $height) / 2), $width, $height)
+    $bitmap.Save($payload.output, [Drawing.Imaging.ImageFormat]::Jpeg)
+} finally {
+    if ($gradient) { $gradient.Dispose() }
+    if ($graphics) { $graphics.Dispose() }
+    if ($bitmap) { $bitmap.Dispose() }
+    if ($logo) { $logo.Dispose() }
+}
+"""
+
+
+def xbox_backdrop(cache, xbox_logo):
+    """Make one landscape backdrop from the installed Xbox app's square logo."""
+    if not xbox_logo or not is_file(Path(xbox_logo)):
+        return None
+    output = cache / 'xbox-backdrop.jpg'
+    if not is_file(output):
+        powershell(XBOX_BACKDROP, {'logo': xbox_logo, 'output': str(output)}, timeout=8)
+    return str(output) if is_file(output) else None
+
+
 def launch(game):
     if game.working_dir is not None:
         subprocess.Popen([game.launch], cwd=str(game.working_dir))

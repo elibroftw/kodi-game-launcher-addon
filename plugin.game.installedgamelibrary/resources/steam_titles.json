@@ -1,0 +1,530 @@
+{
+  "games": [
+    {
+      "title": "Dune: Spice Wars",
+      "aliases": [
+        "Dune Spice Wars"
+      ],
+      "steam_app_id": "1605220"
+    },
+    {
+      "title": "The Witcher 3: Wild Hunt",
+      "aliases": [
+        "The Witcher 3",
+        "The Witcher 3 Wild Hunt",
+        "Witcher 3",
+        "The Witcher 3: Wild Hunt – Remastered"
+      ],
+      "steam_app_id": "292030"
+    },
+    {
+      "title": "Ghost of Tsushima DIRECTOR'S CUT",
+      "aliases": [
+        "Ghost of Tsushima",
+        "Ghost of Tsushima Directors Cut"
+      ],
+      "steam_app_id": "2215430"
+    },
+    {
+      "title": "Death Stranding",
+      "aliases": [
+        "Death Stranding Director's Cut",
+        "Death Stranding Directors Cut"
+      ],
+      "steam_app_id": "1190460",
+      "alternate_steam_app_ids": [
+        "1850570"
+      ]
+    },
+    {
+      "title": "No Man's Sky",
+      "aliases": [
+        "No Mans Sky"
+      ],
+      "steam_app_id": "275850"
+    },
+    {
+      "title": "Assetto Corsa",
+      "steam_app_id": "244210"
+    },
+    {
+      "title": "Assetto Corsa Competizione",
+      "aliases": [
+        "ACC"
+      ],
+      "steam_app_id": "805550"
+    },
+    {
+      "title": "Assetto Corsa EVO",
+      "steam_app_id": "3058630"
+    },
+    {
+      "title": "Forza Horizon 5",
+      "steam_app_id": "1551360"
+    },
+    {
+      "title": "Forza Motorsport",
+      "steam_app_id": "2440510"
+    },
+    {
+      "title": "Need for Speed Unbound",
+      "aliases": [
+        "NFS Unbound"
+      ],
+      "steam_app_id": "1846380"
+    },
+    {
+      "title": "BeamNG.drive",
+      "aliases": [
+        "BeamNG Drive"
+      ],
+      "steam_app_id": "284160"
+    },
+    {
+      "title": "F1 25",
+      "aliases": [
+        "EA Sports F1 25"
+      ],
+      "steam_app_id": "3059520"
+    },
+    {
+      "title": "Marvel's Spider-Man Remastered",
+      "aliases": [
+        "Spider-Man Remastered",
+        "Marvels Spider-Man Remastered"
+      ],
+      "steam_app_id": "1817070"
+    },
+    {
+      "title": "Marvel's Spider-Man: Miles Morales",
+      "aliases": [
+        "Spider-Man Miles Morales",
+        "Marvels Spider-Man Miles Morales"
+      ],
+      "steam_app_id": "1817190"
+    },
+    {
+      "title": "Marvel's Spider-Man 2",
+      "aliases": [
+        "Spider-Man 2",
+        "Marvels Spider-Man 2"
+      ],
+      "steam_app_id": "2651280"
+    },
+    {
+      "title": "Elden Ring",
+      "steam_app_id": "1245620"
+    },
+    {
+      "title": "Elden Ring Nightreign",
+      "steam_app_id": "2622380"
+    },
+    {
+      "title": "Cyberpunk 2077",
+      "steam_app_id": "1091500"
+    },
+    {
+      "title": "Baldur's Gate 3",
+      "aliases": [
+        "Baldurs Gate 3"
+      ],
+      "steam_app_id": "1086940"
+    },
+    {
+      "title": "Red Dead Redemption 2",
+      "aliases": [
+        "RDR2",
+        "Red Dead Redemption II"
+      ],
+      "steam_app_id": "1174180"
+    },
+    {
+      "title": "Grand Theft Auto V",
+      "aliases": [
+        "GTA V Enhanced",
+        "GTA 5 Enhanced",
+        "Grand Theft Auto V Enhanced",
+        "Grand Theft Auto V Legacy",
+        "GTA V",
+        "GTA 5"
+      ],
+      "steam_app_id": "3240220",
+      "alternate_steam_app_ids": [
+        "271590"
+      ]
+    },
+    {
+      "title": "Kingdom Come: Deliverance II",
+      "aliases": [
+        "Kingdom Come Deliverance II",
+        "Kingdom Come Deliverance 2"
+      ],
+      "steam_app_id": "1771300"
+    },
+    {
+      "title": "Hogwarts Legacy",
+      "steam_app_id": "990080"
+    },
+    {
+      "title": "Black Myth: Wukong",
+      "aliases": [
+        "Black Myth Wukong"
+      ],
+      "steam_app_id": "2358720"
+    },
+    {
+      "title": "Horizon Zero Dawn Remastered",
+      "steam_app_id": "2561580"
+    },
+    {
+      "title": "Horizon Forbidden West Complete Edition",
+      "aliases": [
+        "Horizon Forbidden West"
+      ],
+      "steam_app_id": "2420110"
+    },
+    {
+      "title": "God of War",
+      "aliases": [
+        "God of War 2018"
+      ],
+      "steam_app_id": "1593500"
+    },
+    {
+      "title": "God of War Ragnarok",
+      "aliases": [
+        "God of War Ragnarök"
+      ],
+      "steam_app_id": "2322010"
+    },
+    {
+      "title": "The Last of Us Part I",
+      "aliases": [
+        "The Last of Us Part 1"
+      ],
+      "steam_app_id": "1888930"
+    },
+    {
+      "title": "The Last of Us Part II Remastered",
+      "aliases": [
+        "The Last of Us Part II",
+        "The Last of Us Part 2"
+      ],
+      "steam_app_id": "2531310"
+    },
+    {
+      "title": "Uncharted: Legacy of Thieves Collection",
+      "aliases": [
+        "Uncharted Legacy of Thieves Collection"
+      ],
+      "steam_app_id": "1659420"
+    },
+    {
+      "title": "Returnal",
+      "steam_app_id": "1649240"
+    },
+    {
+      "title": "Helldivers 2",
+      "steam_app_id": "553850"
+    },
+    {
+      "title": "Monster Hunter Wilds",
+      "steam_app_id": "2246340"
+    },
+    {
+      "title": "Monster Hunter: World",
+      "aliases": [
+        "Monster Hunter World"
+      ],
+      "steam_app_id": "582010"
+    },
+    {
+      "title": "Resident Evil 4 (2023)",
+      "aliases": [
+        "Resident Evil 4 Remake",
+        "Resident Evil 4 2023"
+      ],
+      "steam_app_id": "2050650"
+    },
+    {
+      "title": "Resident Evil Village",
+      "aliases": [
+        "Resident Evil 8"
+      ],
+      "steam_app_id": "1196590"
+    },
+    {
+      "title": "Resident Evil 2 (2019)",
+      "aliases": [
+        "Resident Evil 2 Remake",
+        "Resident Evil 2 2019"
+      ],
+      "steam_app_id": "883710"
+    },
+    {
+      "title": "Dead Space (2023)",
+      "aliases": [
+        "Dead Space Remake",
+        "Dead Space 2023"
+      ],
+      "steam_app_id": "1693980"
+    },
+    {
+      "title": "Silent Hill 2 (2024)",
+      "aliases": [
+        "Silent Hill 2 Remake",
+        "Silent Hill 2 2024"
+      ],
+      "steam_app_id": "2124490"
+    },
+    {
+      "title": "DOOM Eternal",
+      "steam_app_id": "782330"
+    },
+    {
+      "title": "DOOM: The Dark Ages",
+      "aliases": [
+        "Doom The Dark Ages"
+      ],
+      "steam_app_id": "3017860"
+    },
+    {
+      "title": "Half-Life 2",
+      "aliases": [
+        "Half Life 2"
+      ],
+      "steam_app_id": "220"
+    },
+    {
+      "title": "Portal 2",
+      "steam_app_id": "620"
+    },
+    {
+      "title": "Counter-Strike 2",
+      "aliases": [
+        "Counter Strike 2",
+        "CS2"
+      ],
+      "steam_app_id": "730"
+    },
+    {
+      "title": "Dota 2",
+      "steam_app_id": "570"
+    },
+    {
+      "title": "PUBG: BATTLEGROUNDS",
+      "aliases": [
+        "PUBG",
+        "PUBG Battlegrounds"
+      ],
+      "steam_app_id": "578080"
+    },
+    {
+      "title": "Apex Legends",
+      "steam_app_id": "1172470"
+    },
+    {
+      "title": "Overwatch 2",
+      "aliases": [
+        "Overwatch"
+      ],
+      "steam_app_id": "2357570"
+    },
+    {
+      "title": "Warframe",
+      "steam_app_id": "230410"
+    },
+    {
+      "title": "Destiny 2",
+      "steam_app_id": "1085660"
+    },
+    {
+      "title": "Sea of Thieves",
+      "aliases": [
+        "Sea of Thieves: 2026 Edition",
+        "Sea of Thieves 2026 Edition"
+      ],
+      "steam_app_id": "1172620"
+    },
+    {
+      "title": "Halo: The Master Chief Collection",
+      "aliases": [
+        "Halo The Master Chief Collection",
+        "Halo MCC"
+      ],
+      "steam_app_id": "976730"
+    },
+    {
+      "title": "Terraria",
+      "steam_app_id": "105600"
+    },
+    {
+      "title": "Stardew Valley",
+      "steam_app_id": "413150"
+    },
+    {
+      "title": "Hollow Knight",
+      "steam_app_id": "367520"
+    },
+    {
+      "title": "Hollow Knight: Silksong",
+      "aliases": [
+        "Hollow Knight Silksong",
+        "Silksong"
+      ],
+      "steam_app_id": "1030300"
+    },
+    {
+      "title": "Clair Obscur: Expedition 33",
+      "aliases": [
+        "Clair Obscur Expedition 33",
+        "Expedition 33"
+      ],
+      "steam_app_id": "1903340"
+    },
+    {
+      "title": "Satisfactory",
+      "steam_app_id": "526870"
+    },
+    {
+      "title": "Subnautica",
+      "steam_app_id": "264710"
+    },
+    {
+      "title": "S.T.A.L.K.E.R. 2: Heart of Chornobyl",
+      "aliases": [
+        "STALKER 2",
+        "STALKER 2 Heart of Chornobyl"
+      ],
+      "steam_app_id": "1643320"
+    },
+    {
+      "title": "Cuphead",
+      "steam_app_id": "268910"
+    },
+    {
+      "title": "Resident Evil 4 (2005)",
+      "aliases": [
+        "Resident Evil 4 2005",
+        "Resident Evil 4 Ultimate HD Edition"
+      ],
+      "steam_app_id": "254700"
+    },
+    {
+      "title": "Final Fantasy VII (1997)",
+      "aliases": [
+        "Final Fantasy VII",
+        "Final Fantasy 7"
+      ],
+      "steam_app_id": "39140"
+    },
+    {
+      "title": "Chrono Trigger",
+      "steam_app_id": "613830"
+    },
+    {
+      "title": "Okami HD",
+      "aliases": [
+        "Okami",
+        "Ōkami",
+        "Ōkami HD"
+      ],
+      "steam_app_id": "587620"
+    },
+    {
+      "title": "Persona 4 Golden",
+      "steam_app_id": "1113000"
+    },
+    {
+      "title": "Sonic Adventure 2",
+      "steam_app_id": "213610"
+    },
+    {
+      "title": "Final Fantasy X/X-2 HD Remaster",
+      "steam_app_id": "359870"
+    },
+    {
+      "title": "Metal Gear Solid 3: Snake Eater - Master Collection Version",
+      "aliases": [
+        "Metal Gear Solid 3 Snake Eater",
+        "Metal Gear Solid 3"
+      ],
+      "steam_app_id": "2131650"
+    },
+    {
+      "title": "Road Redemption",
+      "steam_app_id": "300380"
+    },
+    {
+      "title": "Sifu",
+      "steam_app_id": "2138710"
+    },
+    {
+      "title": "Ghost Recon Breakpoint",
+      "aliases": [
+        "Tom Clancy's Ghost Recon Breakpoint",
+        "Tom Clancy's Ghost Recon® Breakpoint"
+      ],
+      "steam_app_id": "2231380"
+    },
+    {
+      "title": "Dead by Daylight",
+      "aliases": [
+        "DBD"
+      ],
+      "steam_app_id": "381210"
+    },
+    {
+      "title": "Battlefield 6",
+      "aliases": [
+        "Battlefield™ 6",
+        "Battlefiedl 6"
+      ],
+      "steam_app_id": "2807960"
+    },
+    {
+      "title": "Atomic Heart",
+      "steam_app_id": "668580"
+    },
+    {
+      "title": "ANIMAL WELL",
+      "steam_app_id": "813230"
+    },
+    {
+      "title": "Forza Horizon 6",
+      "steam_app_id": "2483190"
+    },
+    {
+      "title": "Palworld",
+      "steam_app_id": "1623730"
+    },
+    {
+      "title": "ARC Raiders",
+      "steam_app_id": "1808500"
+    },
+    {
+      "title": "Insurgency: Sandstorm",
+      "aliases": [
+        "Insurgency Sandstorm"
+      ],
+      "steam_app_id": "581320"
+    },
+    {
+      "title": "Devil May Cry 5",
+      "aliases": [
+        "DMC5",
+        "Devil May Cry V"
+      ],
+      "steam_app_id": "601150"
+    },
+    {
+      "title": "The Division 2",
+      "aliases": [
+        "Tom Clancy's The Division 2",
+        "Tom Clancy’s The Division® 2",
+        "Division 2"
+      ],
+      "steam_app_id": "2221490"
+    }
+  ]
+}

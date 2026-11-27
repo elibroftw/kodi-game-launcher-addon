@@ -185,41 +185,70 @@ def cached_curated_hero(url, cache):
     return save_image(cache / f'{digest}{suffix}', data) if suffix else None
 
 
-def enrich_game(game, cache, heroes=()):
+def steam_hero(game, cache, app_id):
+    local = game.fanart
+    if local and local.stem.casefold().endswith('library_hero_2x'):
+        return local
+    # Keep the 2x cache separate from older entries that may contain a smaller hero.
+    return (
+        cached_image(cache, app_id, 'hero-2x.jpg', 'library_hero_2x.jpg')
+        or local
+        or cached_image(cache, app_id, 'hero.jpg', 'library_hero.jpg')
+    )
+
+
+def automatic_fanart(game, cache, app_id, *, prefer_hero):
+    if prefer_hero:
+        wide = steam_hero(game, cache, app_id) or cached_screenshot(cache, app_id)
+    else:
+        wide = cached_screenshot(cache, app_id) or steam_hero(game, cache, app_id)
+    return (
+        wide
+        or game.fallback_fanart
+        or cached_image(cache, app_id, 'landscape.jpg', 'capsule_616x353.jpg', 'header.jpg')
+    )
+
+
+def enrich_game(game, cache, heroes=(), steam_titles=()):
     override = (
         local_art(game.install_dir, 'landscape', 'fanart', 'background')
         if game.install_dir
         else None
     )
-    if not override:
-        curated = hero_catalog.match(game, heroes)
-        if curated is not None:
-            override = cached_curated_hero(curated.url, cache.parent / 'curated')
+    curated = hero_catalog.match(game, heroes)
+    if not override and curated is not None and curated.url:
+        override = cached_curated_hero(curated.url, cache.parent / 'curated')
     if override:
         game = replace(game, fanart=override)
         if game.poster:
             return game
-    if game.launcher == 'Steam':
+    prefer_hero = game.launcher == 'Steam'
+    if prefer_hero:
         app_id = game.app_id if valid_app_id(game.app_id) else None
     else:
-        app_id = match_title(game.title, cache)
+        match = (
+            curated if curated and curated.steam_app_id else hero_catalog.match(game, steam_titles)
+        )
+        if match and valid_app_id(match.steam_app_id):
+            app_id = match.steam_app_id
+            prefer_hero = True
+        else:
+            app_id = match_title(game.title, cache)
     if not app_id:
         return game
     poster = game.poster or cached_image(cache, app_id, 'poster.jpg', 'library_600x900.jpg')
-    fanart = (
-        override
-        or cached_screenshot(cache, app_id)
-        or game.fanart
-        or cached_image(cache, app_id, 'hero.jpg', 'library_hero_2x.jpg', 'library_hero.jpg')
-        or game.fallback_fanart
-        or cached_image(cache, app_id, 'landscape.jpg', 'capsule_616x353.jpg', 'header.jpg')
-    )
+    fanart = override or automatic_fanart(game, cache, app_id, prefer_hero=prefer_hero)
     return replace(game, poster=poster, fanart=fanart)
 
 
 def enrich_games(games, cache):
     if not games:
         return games
-    enrich = partial(enrich_game, cache=cache, heroes=hero_catalog.load())
+    enrich = partial(
+        enrich_game,
+        cache=cache,
+        heroes=hero_catalog.load(),
+        steam_titles=hero_catalog.load_steam_titles(),
+    )
     with ThreadPoolExecutor(max_workers=4) as workers:
         return list(workers.map(enrich, games))

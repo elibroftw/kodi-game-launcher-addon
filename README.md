@@ -20,9 +20,11 @@ In Estuary, the library opens in horizontal Poster view with the most recently l
 
 Missing posters and widescreen covers are downloaded from Steam during indexing and cached in Kodi’s add-on profile. For non-Steam installs, the add-on searches Steam by title and only uses a unique exact match. It never writes artwork to game folders. If no poster is found, the tile uses an icon.
 
-As you highlight games, the library prefers curated hero images from [`hero_images.json`](plugin.game.installedgamelibrary/resources/hero_images.json), then Steam screenshots or landscape art. Add a title, HTTPS URL serving a JPEG, PNG, or WebP, and optional Steam app ID or aliases to maintain the list. The image format is checked after download, so image endpoints and URLs without extensions work too. Changes trigger a reindex. Portrait posters stay on the tiles, and missing backdrops are blank. The skin controls transitions between loaded backdrops. In Estuary, enable **Configure skin → Artwork → Show media fanart as background** if needed.
+Custom backdrops live in [`hero_images.json`](plugin.game.installedgamelibrary/resources/hero_images.json). For standard Steam art, the add-on builds the CDN URL from the app ID. [`steam_titles.json`](plugin.game.installedgamelibrary/resources/steam_titles.json) preserves aliases and edition IDs for matching. Both files together cover over 100 titles; neither adds emulator discovery.
 
-Game Bar uses **Win+G**; try windowed mode if the overlay doesn’t appear.
+Changes trigger a reindex. Portraits stay on the tiles, and missing backdrops are blank. In Estuary, enable **Configure skin → Artwork → Show media fanart as background** if needed.
+
+The Xbox and Game Bar tiles share the installed Xbox app’s logo and backdrop when available. Game Bar uses **Win+G**; try windowed mode if the overlay doesn’t appear.
 
 ## Development
 
@@ -32,7 +34,7 @@ Using an AI agent is highly encouraged as it will auto build the plugin to be in
 uvx ruff check --fix
 uvx ruff format
 uv run --python 3.11 --no-project python -B -m unittest discover -s tests -v
-python -m zipfile -c plugin.game.installedgamelibrary-0.8.7.zip plugin.game.installedgamelibrary
+python -m zipfile -c plugin.game.installedgamelibrary-0.10.0.zip plugin.game.installedgamelibrary
 ```
 
-[Cyberpunk Neon Palette](https://www.color-hex.com/color-palette/61235) · [IGDB](https://www.igdb.com/) · GPT 6.2 Sol · pi agent · [video game artwork](https://hdqwalls.com/shadow-of-the-colossus-8k-wallpaper)
+[Local hero-image backup manifest](artwork/Game%20Hero%20Images/hero-image-backup.json) · [Cyberpunk Neon Palette](https://www.color-hex.com/color-palette/61235) · [IGDB](https://www.igdb.com/) · GPT 6.2 Sol · pi agent · [video game artwork](https://hdqwalls.com/shadow-of-the-colossus-8k-wallpaper)

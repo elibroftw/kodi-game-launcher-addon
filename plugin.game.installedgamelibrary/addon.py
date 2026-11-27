@@ -65,20 +65,26 @@ def focus_initial_item(entry_count, listing_token):
             return
 
 
+def backdrop_or_blank(path):
+    return path if path and is_file(Path(path)) else BLANK_FANART
+
+
 def library_rows(snapshot):
     games = (
         history.order_games(snapshot.games, profile_directory() / HISTORY_FILE) if snapshot else ()
     )
+    tool_icons = snapshot.tool_icons if snapshot else {}
+    xbox_logo = tool_icons.get('xbox')
+    xbox_fanart = backdrop_or_blank(snapshot.xbox_fanart if snapshot else None)
     for key, (label, _) in TOOLS.items():
         item = xbmcgui.ListItem(label=label)
-        icon = snapshot.tool_icons.get(key, DEFAULT_ICON) if snapshot else DEFAULT_ICON
-        item.setArt({'thumb': icon, 'icon': icon, 'poster': icon, 'fanart': BLANK_FANART})
+        icon = xbox_logo or tool_icons.get(key, DEFAULT_ICON)
+        item.setArt({'thumb': icon, 'icon': icon, 'poster': icon, 'fanart': xbox_fanart})
         yield item, None, key
     for game in games:
         item = xbmcgui.ListItem(label=game.title, label2=game.launcher)
         image = game.image or DEFAULT_ICON
-        backdrop = game.fanart if game.fanart and is_file(Path(game.fanart)) else BLANK_FANART
-        art = {'thumb': image, 'icon': image, 'fanart': backdrop}
+        art = {'thumb': image, 'icon': image, 'fanart': backdrop_or_blank(game.fanart)}
         if game.is_poster:
             art['poster'] = image
         item.setArt(art)

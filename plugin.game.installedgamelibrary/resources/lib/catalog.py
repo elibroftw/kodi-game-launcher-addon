@@ -11,7 +11,7 @@ from . import hero_catalog, online_art, windows
 from .storage import write_json
 
 FILENAME = 'game_catalog.json'
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 9
 
 
 @dataclass(frozen=True)
@@ -28,6 +28,7 @@ class GameTile:
 class Catalog:
     games: tuple[GameTile, ...]
     tool_icons: dict[str, str]
+    xbox_fanart: str | None = None
 
 
 def load(profile):
@@ -42,7 +43,10 @@ def load(profile):
         return None
     games = data.get('games')
     icons = data.get('tool_icons')
+    xbox_fanart = data.get('xbox_fanart')
     if not isinstance(games, list) or not isinstance(icons, dict):
+        return None
+    if xbox_fanart is not None and not isinstance(xbox_fanart, str):
         return None
     tiles = []
     for entry in games:
@@ -61,7 +65,9 @@ def load(profile):
             GameTile(entry['key'], entry['title'], entry['launcher'], image, is_poster, fanart)
         )
     return Catalog(
-        tuple(tiles), {key: icon for key, icon in icons.items() if isinstance(icon, str) and icon}
+        tuple(tiles),
+        {key: icon for key, icon in icons.items() if isinstance(icon, str) and icon},
+        xbox_fanart,
     )
 
 
@@ -106,7 +112,10 @@ def rebuild(profile, *, force=False):
                     str(game.fanart) if game.fanart else None,
                 )
             )
-        snapshot = Catalog(tuple(tiles), windows.xbox_artwork(cache))
+        tool_icons = windows.xbox_artwork(cache)
+        snapshot = Catalog(
+            tuple(tiles), tool_icons, windows.xbox_backdrop(cache, tool_icons.get('xbox'))
+        )
         write_json(
             profile / FILENAME,
             dict(version=SCHEMA_VERSION, hero_revision=hero_revision, **asdict(snapshot)),
