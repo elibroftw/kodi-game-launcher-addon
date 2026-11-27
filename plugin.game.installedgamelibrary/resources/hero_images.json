@@ -1,0 +1,47 @@
+{
+  "games": [
+    {
+      "title": "Dune: Awakening",
+      "aliases": ["Dune Awakening"],
+      "steam_app_id": "1172710",
+      "hero_url": "https://duneawakening.com/wp-content/uploads/Paralax-Background-2-1.jpg"
+    },
+    {
+      "title": "Factorio",
+      "steam_app_id": "427520",
+      "hero_url": "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_2.0/store/software/switch/70010000056818/c700b4cc22a81c2099335d83fe379e9cdc6afd190a9985f74ba8f7e589f4ffd2"
+    },
+    {
+      "title": "Hades",
+      "steam_app_id": "1145360",
+      "hero_url": "https://images.ctfassets.net/5owu3y35gz1g/66Ay8RSCIZ8aIOqPSyFQuw/d39b9ceeb1812a52ffffc9b923372fae/Hades_Launch.png?w=1920&q=80"
+    },
+    {
+      "title": "Ratchet & Clank: Rift Apart",
+      "aliases": [
+        "Ratchet & Clank Rift Apart",
+        "Ratchet and Clank Rift Apart",
+        "Ratchet Clank Rift Apart",
+        "Rachet and Clank Rift Apart"
+      ],
+      "steam_app_id": "1895880",
+      "hero_url": "https://cdn.artstation.com/magazine/uploads/2021/07/RCRA_Header_Wide.jpg"
+    },
+    {
+      "title": "Sekiro: Shadows Die Twice",
+      "aliases": [
+        "Sekiro",
+        "Sekiro Shadows Die Twice",
+        "Sekiro: Shadows Die Twice - GOTY Edition",
+        "Sekiro Shadows Die Twice GOTY Edition"
+      ],
+      "steam_app_id": "814380",
+      "hero_url": "https://mrwallpaper.com/images/high/sekiro-shadows-die-twice-castle-fire-ab42pebqzoz9xaly.webp"
+    },
+    {
+      "title": "Shadow of the Colossus",
+      "aliases": ["Shadow of the Collosus"],
+      "hero_url": "https://images.hdqwalls.com/wallpapers/shadow-of-the-colossus-8k-ao.jpg"
+    }
+  ]
+}

@@ -7,11 +7,11 @@ import json
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 
-from . import windows
+from . import hero_catalog, online_art, windows
 from .storage import write_json
 
 FILENAME = 'game_catalog.json'
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 7
 
 
 @dataclass(frozen=True)
@@ -21,6 +21,7 @@ class GameTile:
     launcher: str
     image: str | None = None
     is_poster: bool = False
+    fanart: str | None = None
 
 
 @dataclass(frozen=True)
@@ -37,6 +38,8 @@ def load(profile):
         return None
     if not isinstance(data, dict) or data.get('version') != SCHEMA_VERSION:
         return None
+    if data.get('hero_revision') != hero_catalog.revision():
+        return None
     games = data.get('games')
     icons = data.get('tool_icons')
     if not isinstance(games, list) or not isinstance(icons, dict):
@@ -49,9 +52,14 @@ def load(profile):
             return None
         image = entry.get('image')
         is_poster = entry.get('is_poster', False)
-        if (image is not None and not isinstance(image, str)) or not isinstance(is_poster, bool):
+        fanart = entry.get('fanart')
+        if not isinstance(is_poster, bool) or any(
+            path is not None and not isinstance(path, str) for path in (image, fanart)
+        ):
             return None
-        tiles.append(GameTile(entry['key'], entry['title'], entry['launcher'], image, is_poster))
+        tiles.append(
+            GameTile(entry['key'], entry['title'], entry['launcher'], image, is_poster, fanart)
+        )
     return Catalog(
         tuple(tiles), {key: icon for key, icon in icons.items() if isinstance(icon, str) and icon}
     )
@@ -81,13 +89,26 @@ def rebuild(profile, *, force=False):
     with index_lock(profile) as acquired:
         if not acquired or (not force and load(profile) is not None):
             return False
-        games = windows.discover()
+        hero_revision = hero_catalog.revision()
+        games = online_art.enrich_games(windows.discover(), profile / 'artwork' / 'steam')
         cache = profile / 'icons'
         images = windows.artwork(games, cache) if games else {}
         tiles = []
         for game in games:
             kind, image = images.get(game.key, (None, None))
-            tiles.append(GameTile(game.key, game.title, game.launcher, image, kind == 'poster'))
+            tiles.append(
+                GameTile(
+                    game.key,
+                    game.title,
+                    game.launcher,
+                    image,
+                    kind == 'poster',
+                    str(game.fanart) if game.fanart else None,
+                )
+            )
         snapshot = Catalog(tuple(tiles), windows.xbox_artwork(cache))
-        write_json(profile / FILENAME, dict(version=SCHEMA_VERSION, **asdict(snapshot)))
+        write_json(
+            profile / FILENAME,
+            dict(version=SCHEMA_VERSION, hero_revision=hero_revision, **asdict(snapshot)),
+        )
     return True

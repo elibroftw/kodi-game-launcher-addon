@@ -14,7 +14,7 @@ ADDON_DIR = Path(__file__).resolve().parents[1] / ADDON_ID
 PLUGIN_URL = f'plugin://{ADDON_ID}/'
 sys.path.insert(0, str(ADDON_DIR))
 
-from resources.lib import catalog, discovery, history, standalone, windows  # noqa: E402
+from resources.lib import catalog, discovery, hero_catalog, history, online_art, standalone, windows  # noqa: E402
 
 
 class DiscoveryTests(unittest.TestCase):
@@ -22,6 +22,9 @@ class DiscoveryTests(unittest.TestCase):
         temp = TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name)
+        offline = patch.object(online_art, 'fetch', return_value=None)
+        offline.start()
+        self.addCleanup(offline.stop)
 
     def put(self, path, text=''):
         file = self.root / path
@@ -29,7 +32,7 @@ class DiscoveryTests(unittest.TestCase):
         file.write_text(text, encoding='utf-8')
         return file
 
-    def test_steam_additional_library_and_cached_poster(self):
+    def test_steam_additional_library_and_cached_artwork(self):
         library = json.dumps(str(self.root / 'Games Library'))
         self.put(
             'Steam/steamapps/libraryfolders.vdf',
@@ -58,9 +61,20 @@ class DiscoveryTests(unittest.TestCase):
         )
         self.put(apps + 'common/Test/test.exe')
         poster = self.put('Steam/appcache/librarycache/123/hash/library_600x900.jpg')
+        hero = self.put('Steam/appcache/librarycache/123/library_hero.jpg')
         [game] = discovery.steam_games(self.root / 'Steam')
         self.assertEqual(game.launch, 'steam://rungameid/123')
         self.assertEqual(game.poster, poster)
+        self.assertEqual(game.fanart, hero)
+
+        wide_cover = self.put('Steam/appcache/librarycache/123/library_header.jpg')
+        [game] = discovery.steam_games(self.root / 'Steam')
+        self.assertEqual(game.poster, poster)
+        self.assertEqual(game.fanart, hero)
+        hero.unlink()
+        [game] = discovery.steam_games(self.root / 'Steam')
+        self.assertIsNone(game.fanart)
+        self.assertEqual(game.fallback_fanart, wide_cover)
 
     def test_epic_launch_uses_launcher_uri_and_safe_executable(self):
         exe = self.put('Installed/Bin/Game.exe')
@@ -384,6 +398,43 @@ class DiscoveryTests(unittest.TestCase):
         self.assertEqual(catalog.load(self.root), expected)
         self.assertNotIn(game.launch, (self.root / catalog.FILENAME).read_text(encoding='utf-8'))
 
+    def test_catalog_caches_game_background_and_prefers_install_folder_override(self):
+        hero = self.put('library_hero.jpg')
+        self.put('Installed/Override/fanart.png')
+        override = self.put('Installed/Override/landscape.jpg')
+        games = [
+            discovery.Game('Steam', '1', 'Cached artwork', 'unused', fanart=hero),
+            discovery.Game(
+                'Steam', '2', 'Custom artwork', 'unused', install_dir=override.parent, fanart=hero
+            ),
+            discovery.Game('Standalone', '3', 'No artwork', 'unused'),
+        ]
+        with (
+            patch.object(catalog, 'index_lock', side_effect=lambda _: nullcontext(True)),
+            patch.object(windows, 'discover', return_value=games),
+            patch.object(windows, 'artwork', return_value={}),
+            patch.object(windows, 'xbox_artwork', return_value={}),
+        ):
+            self.assertTrue(catalog.rebuild(self.root))
+        tiles = catalog.load(self.root).games
+        self.assertEqual([tile.fanart for tile in tiles], [str(hero), str(override), None])
+
+    def test_old_catalog_reindexes_to_pick_preferred_widescreen_art(self):
+        self.put(catalog.FILENAME, json.dumps({'version': 6, 'games': [], 'tool_icons': {}}))
+        self.assertIsNone(catalog.load(self.root))
+
+    def test_curated_catalog_changes_invalidate_cached_library(self):
+        data = {
+            'version': catalog.SCHEMA_VERSION,
+            'hero_revision': hero_catalog.revision(),
+            'games': [],
+            'tool_icons': {},
+        }
+        self.put(catalog.FILENAME, json.dumps(data))
+        self.assertEqual(catalog.load(self.root), catalog.Catalog((), {}))
+        with patch.object(hero_catalog, 'revision', return_value='changed'):
+            self.assertIsNone(catalog.load(self.root))
+
     def test_failed_rescan_leaves_previous_catalog_on_disk(self):
         with (
             patch.object(catalog, 'index_lock', side_effect=lambda _: nullcontext(True)),
@@ -440,8 +491,239 @@ class DiscoveryTests(unittest.TestCase):
         )
 
 
+class OnlineArtworkTests(unittest.TestCase):
+    def setUp(self):
+        temp = TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+        self.cache = self.root / 'profile' / 'artwork' / 'steam'
+        self.poster = b'\xff\xd8\xffposter\xff\xd9'
+        self.wide = b'\xff\xd8\xfflandscape\xff\xd9'
+
+    def screenshot_metadata(self, app_id, url):
+        return json.dumps(
+            {app_id: {'success': True, 'data': {'screenshots': [{'path_full': url}]}}}
+        ).encode()
+
+    def test_exact_standalone_match_downloads_to_profile_and_reuses_cache(self):
+        game_dir = self.root / 'Games' / 'Factorio'
+        game_dir.mkdir(parents=True)
+        game = discovery.Game('Standalone', '1', 'Factorio', 'factorio.exe', install_dir=game_dir)
+        old_cover = self.cache / '427520' / 'landscape.jpg'
+        old_cover.parent.mkdir(parents=True)
+        old_cover.write_bytes(b'old low-resolution cover')
+        results = json.dumps(
+            {
+                'items': [
+                    {'type': 'app', 'id': 427520, 'name': 'Factorio'},
+                    {'type': 'app', 'id': 645390, 'name': 'Factorio: Space Age'},
+                ]
+            }
+        ).encode()
+        screenshot_url = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427520/ss_ab.1920x1080.jpg'
+        details = self.screenshot_metadata('427520', screenshot_url)
+        with (
+            patch.object(hero_catalog, 'load', return_value=()),
+            patch.object(
+                online_art, 'fetch', side_effect=[results, self.poster, details, self.wide]
+            ) as fetch,
+        ):
+            [first] = online_art.enrich_games([game], self.cache)
+            [second] = online_art.enrich_games([game], self.cache)
+        self.assertEqual(first, second)
+        self.assertEqual((first.key, first.launch), (game.key, game.launch))
+        self.assertEqual(first.poster, self.cache / '427520' / 'poster.jpg')
+        self.assertEqual(first.fanart, self.cache / '427520' / 'screenshot.jpg')
+        self.assertEqual(first.poster.read_bytes(), self.poster)
+        self.assertEqual(first.fanart.read_bytes(), self.wide)
+        self.assertEqual(list(game_dir.iterdir()), [])
+        self.assertEqual(fetch.call_count, 4)
+        urls = [args.args[0] for args in fetch.call_args_list]
+        self.assertIn('term=Factorio', urls[0])
+        self.assertTrue(urls[1].endswith('/427520/library_600x900.jpg'))
+        self.assertIn('appids=427520&filters=screenshots', urls[2])
+        self.assertEqual(urls[3], screenshot_url)
+
+    def test_curated_dune_hero_matches_correct_game_and_not_spice_wars(self):
+        heroes = hero_catalog.load()
+        installed = discovery.Game('Steam', '1172710', 'Dune: Awakening', 'unused')
+        alias = discovery.Game('Standalone', 'other', 'Dune Awakening', 'unused')
+        spice_wars = discovery.Game('Steam', '1605220', 'Dune: Spice Wars', 'unused')
+        wrong_id = discovery.Game('Steam', '41', 'Dune: Awakening', 'unused')
+        hero = hero_catalog.match(installed, heroes)
+        self.assertEqual(
+            hero.url, 'https://duneawakening.com/wp-content/uploads/Paralax-Background-2-1.jpg'
+        )
+        self.assertEqual(hero_catalog.match(alias, heroes), hero)
+        self.assertIsNone(hero_catalog.match(spice_wars, heroes))
+        self.assertIsNone(hero_catalog.match(wrong_id, heroes))
+
+    def test_curated_hero_is_downloaded_once_and_overrides_steam_art(self):
+        game = discovery.Game(
+            'Standalone',
+            '1',
+            'Dune Awakening',
+            'unused',
+            poster=self.root / 'portrait.jpg',
+            fanart=self.root / 'steam.jpg',
+        )
+        with patch.object(online_art, 'fetch', return_value=self.wide) as fetch:
+            [first] = online_art.enrich_games([game], self.cache)
+            [second] = online_art.enrich_games([game], self.cache)
+        self.assertEqual(first, second)
+        self.assertEqual(first.poster, game.poster)
+        self.assertEqual(first.fanart.parent, self.cache.parent / 'curated')
+        self.assertEqual(first.fanart.read_bytes(), self.wide)
+        hero = hero_catalog.match(game, hero_catalog.load())
+        fetch.assert_called_once_with(hero.url, online_art.MAX_IMAGE_BYTES)
+
+    def test_extensionless_factorio_url_works_for_steam_and_standalone(self):
+        poster = self.root / 'portrait.jpg'
+        steam = discovery.Game('Steam', '427520', 'Factorio', 'unused', poster=poster)
+        standalone_game = discovery.Game('Standalone', 'test', 'Factorio', 'unused', poster=poster)
+        heroes = hero_catalog.load()
+        hero = hero_catalog.match(steam, heroes)
+        self.assertTrue(hero.url.startswith('https://assets.nintendo.com/image/upload/'))
+        self.assertEqual(hero_catalog.match(standalone_game, heroes), hero)
+        with patch.object(online_art, 'fetch', return_value=self.wide) as fetch:
+            first = online_art.enrich_game(steam, self.cache, heroes)
+            second = online_art.enrich_game(standalone_game, self.cache, heroes)
+        self.assertEqual(first.fanart, second.fanart)
+        self.assertEqual(second.fanart.read_bytes(), self.wide)
+        fetch.assert_called_once_with(hero.url, online_art.MAX_IMAGE_BYTES)
+
+    def test_hades_png_hero_is_cached_as_png(self):
+        game = discovery.Game('Steam', '1145360', 'Hades', 'unused', poster=self.root / 'tile.jpg')
+        hero = hero_catalog.match(game, hero_catalog.load())
+        self.assertTrue(hero.url.endswith('/Hades_Launch.png?w=1920&q=80'))
+        png = b'\x89PNG\r\n\x1a\nimage\0\0\0\0IEND\xaeB`\x82'
+        with patch.object(online_art, 'fetch', return_value=png) as fetch:
+            [first] = online_art.enrich_games([game], self.cache)
+            [second] = online_art.enrich_games([game], self.cache)
+        self.assertEqual(first, second)
+        self.assertEqual(first.poster, game.poster)
+        self.assertEqual(first.fanart.suffix, '.png')
+        self.assertEqual(first.fanart.read_bytes(), png)
+        fetch.assert_called_once_with(hero.url, online_art.MAX_IMAGE_BYTES)
+
+    def test_sekiro_webp_hero_is_downloaded_and_cached(self):
+        game = discovery.Game(
+            'Standalone', 'test', 'Sekiro', 'unused', poster=self.root / 'tile.jpg'
+        )
+        hero = hero_catalog.match(game, hero_catalog.load())
+        self.assertEqual(hero.steam_app_id, '814380')
+        body = b'WEBPVP8L\x04\0\0\0data'
+        webp = b'RIFF' + len(body).to_bytes(4, 'little') + body
+        self.assertIsNone(online_art.image_suffix(webp[:-1]))
+        with patch.object(online_art, 'fetch', return_value=webp) as fetch:
+            [first] = online_art.enrich_games([game], self.cache)
+            [second] = online_art.enrich_games([game], self.cache)
+        self.assertEqual(first, second)
+        self.assertEqual(first.poster, game.poster)
+        self.assertEqual(first.fanart.suffix, '.webp')
+        self.assertEqual(first.fanart.read_bytes(), webp)
+        fetch.assert_called_once_with(hero.url, online_art.MAX_IMAGE_BYTES)
+
+    def test_curated_hero_endpoint_is_cached_by_response_format(self):
+        game = discovery.Game(
+            'Standalone', 'test', 'Example Game', 'unused', poster=self.root / 'tile.jpg'
+        )
+        url = 'https://example.com/img.php?src=wallpaper.jpg&height=506'
+        self.assertTrue(hero_catalog.is_hero_url(url))
+        hero = hero_catalog.Hero(('example game',), url)
+        with patch.object(online_art, 'fetch', return_value=self.wide) as fetch:
+            resolved = online_art.enrich_game(game, self.cache, (hero,))
+        fetch.assert_called_once_with(url, online_art.MAX_IMAGE_BYTES)
+        self.assertEqual(resolved.fanart.suffix, '.jpg')
+        self.assertEqual(resolved.fanart.read_bytes(), self.wide)
+
+    def test_unavailable_curated_hero_keeps_steam_fallback(self):
+        game = discovery.Game(
+            'Steam',
+            '1172710',
+            'Dune: Awakening',
+            'unused',
+            poster=self.root / 'portrait.jpg',
+            fanart=self.root / 'steam.jpg',
+        )
+        with patch.object(online_art, 'fetch', return_value=None):
+            [resolved] = online_art.enrich_games([game], self.cache)
+        self.assertEqual(resolved, game)
+
+    def test_ambiguous_title_never_downloads_artwork(self):
+        game = discovery.Game('Standalone', '1', 'Ambiguous', 'unused')
+        data = json.dumps(
+            {
+                'items': [
+                    {'type': 'app', 'id': 1, 'name': 'Ambiguous'},
+                    {'type': 'app', 'id': 2, 'name': 'AMBIGUOUS'},
+                ]
+            }
+        ).encode()
+        with patch.object(online_art, 'fetch', return_value=data) as fetch:
+            self.assertEqual(online_art.enrich_game(game, self.cache), game)
+        fetch.assert_called_once()
+        self.assertFalse(self.cache.exists())
+
+    def test_steam_app_id_skips_title_search_and_keeps_existing_art(self):
+        poster = self.root / 'existing.jpg'
+        game = discovery.Game('Steam', '42', 'Test', 'unused', poster=poster)
+        with patch.object(online_art, 'fetch', side_effect=[None, None, self.wide]) as fetch:
+            enriched = online_art.enrich_game(game, self.cache)
+        self.assertEqual(enriched.poster, poster)
+        self.assertEqual(enriched.fanart.read_bytes(), self.wide)
+        self.assertEqual(
+            [args.args[0].rsplit('/', 1)[-1] for args in fetch.call_args_list[1:]],
+            ['library_hero_2x.jpg', 'library_hero.jpg'],
+        )
+
+    def test_existing_small_cover_still_works_without_full_size_art(self):
+        small = self.cache / '42' / 'landscape.jpg'
+        small.parent.mkdir(parents=True)
+        small.write_bytes(self.wide)
+        game = discovery.Game('Steam', '42', 'Test', 'unused', poster=self.root / 'existing.jpg')
+        with patch.object(online_art, 'fetch', return_value=None) as fetch:
+            enriched = online_art.enrich_game(game, self.cache)
+        self.assertEqual(enriched.fanart, small)
+        self.assertEqual(fetch.call_count, 3)
+
+    def test_screenshot_replaces_existing_steam_hero_but_not_tile_poster(self):
+        hero = self.root / 'hero.jpg'
+        poster = self.root / 'portrait.jpg'
+        game = discovery.Game('Steam', '42', 'Test', 'unused', poster=poster, fanart=hero)
+        url = 'https://cdn.cloudflare.steamstatic.com/steam/apps/42/ss_ab.jpg'
+        details = self.screenshot_metadata('42', url)
+        with patch.object(online_art, 'fetch', side_effect=[details, self.wide]):
+            result = online_art.enrich_game(game, self.cache)
+        self.assertEqual(result.poster, poster)
+        self.assertEqual(result.fanart, self.cache / '42' / 'screenshot.jpg')
+
+    def test_screenshot_on_unrelated_host_is_not_fetched(self):
+        game = discovery.Game(
+            'Steam',
+            '42',
+            'Test',
+            'unused',
+            poster=self.root / 'portrait.jpg',
+            fanart=self.root / 'hero.jpg',
+        )
+        details = self.screenshot_metadata('42', 'https://example.com/steam/apps/42/ss_ab.jpg')
+        with patch.object(online_art, 'fetch', return_value=details) as fetch:
+            self.assertEqual(online_art.enrich_game(game, self.cache), game)
+        fetch.assert_called_once()
+
+    def test_non_image_response_is_not_cached(self):
+        game = discovery.Game('Steam', '42', 'Test', 'unused')
+        with patch.object(online_art, 'fetch', return_value=b'<html>not an image</html>'):
+            self.assertEqual(online_art.enrich_game(game, self.cache), game)
+        self.assertFalse(self.cache.exists())
+
+
 class KodiTests(unittest.TestCase):
     def setUp(self):
+        offline = patch.object(online_art, 'fetch', return_value=None)
+        offline.start()
+        self.addCleanup(offline.stop)
         profile = TemporaryDirectory()
         self.addCleanup(profile.cleanup)
         self.profile = Path(profile.name)
@@ -479,10 +761,20 @@ class KodiTests(unittest.TestCase):
             [call('Container.SetViewMode(51)'), call('SetFocus(51,1,absolute)')],
         )
         xbox.setArt.assert_called_once_with(
-            {'icon': 'xbox.png', 'thumb': 'xbox.png', 'poster': 'xbox.png'}
+            {
+                'icon': 'xbox.png',
+                'thumb': 'xbox.png',
+                'poster': 'xbox.png',
+                'fanart': self.addon.BLANK_FANART,
+            }
         )
         game_bar.setArt.assert_called_once_with(
-            {'icon': 'bar.png', 'thumb': 'bar.png', 'poster': 'bar.png'}
+            {
+                'icon': 'bar.png',
+                'thumb': 'bar.png',
+                'poster': 'bar.png',
+                'fanart': self.addon.BLANK_FANART,
+            }
         )
         xbox.addContextMenuItems.assert_called_once_with(
             [('Rescan installed games', f'RunPlugin({PLUGIN_URL}?index=manual)')]
@@ -507,6 +799,10 @@ class KodiTests(unittest.TestCase):
         discover.assert_not_called()
         artwork.assert_not_called()
         self.modules['xbmcgui'].ListItem.assert_any_call(label='Indexing installed games…')
+        self.assertEqual(
+            self.modules['xbmcgui'].ListItem.return_value.setArt.call_args.args[0]['fanart'],
+            self.addon.BLANK_FANART,
+        )
         xbmc.executebuiltin.assert_called_once()
 
     def test_warm_library_even_when_empty_does_not_trigger_indexing(self):
@@ -544,6 +840,30 @@ class KodiTests(unittest.TestCase):
         self.assertEqual(catalog.load(self.profile).games[0].key, game.key)
         xbmc.executebuiltin.assert_called_once_with('Container.Refresh')
         self.modules['xbmcplugin'].setResolvedUrl.assert_not_called()
+
+    def test_listing_supplies_distinct_backdrop_or_blank_and_keeps_poster(self):
+        with_fanart, without_fanart, missing_file = Mock(), Mock(), Mock()
+        self.modules['xbmcgui'].ListItem.side_effect = [
+            Mock(),
+            Mock(),
+            with_fanart,
+            without_fanart,
+            missing_file,
+        ]
+        hero = self.profile / 'hero.jpg'
+        hero.touch()
+        games = (
+            catalog.GameTile('Steam:1', 'First', 'Steam', 'cover.png', True, str(hero)),
+            catalog.GameTile('Steam:2', 'Second', 'Steam'),
+            catalog.GameTile('Steam:3', 'Third', 'Steam', fanart=str(self.profile / 'missing.jpg')),
+        )
+        self.addon.show_games(1, PLUGIN_URL, catalog.Catalog(games, {}))
+        with_fanart.setArt.assert_called_once_with(
+            {'thumb': 'cover.png', 'icon': 'cover.png', 'poster': 'cover.png', 'fanart': str(hero)}
+        )
+        self.assertTrue(Path(self.addon.BLANK_FANART).is_file())
+        for item in (without_fanart, missing_file):
+            self.assertEqual(item.setArt.call_args.args[0]['fanart'], self.addon.BLANK_FANART)
 
     def test_focus_starts_on_first_game_when_available(self):
         xbmc = self.set_estuary_games()

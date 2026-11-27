@@ -21,6 +21,8 @@ class Game:
     executable: Path | None = None
     install_dir: Path | None = None
     working_dir: Path | None = None  # Set only for direct executable launches.
+    fanart: Path | None = None
+    fallback_fanart: Path | None = None
 
     @property
     def key(self):
@@ -105,15 +107,17 @@ def inside(directory, relative):
         return None
 
 
-def steam_poster(root, app_id):
+def steam_art(root, app_id, *stems):
     cache = root / 'appcache' / 'librarycache'
-    for ext in ('jpg', 'png', 'webp'):
-        name = 'library_600x900.' + ext
-        for path in [cache / (app_id + '_' + name), cache / app_id / name] + glob_files(
-            cache / app_id, '*/' + name
-        ):
-            if is_file(path):
-                return path
+    for stem in stems:
+        for ext in ('jpg', 'png', 'webp'):
+            name = f'{stem}.{ext}'
+            for path in (cache / f'{app_id}_{name}', cache / app_id / name):
+                if is_file(path):
+                    return path
+            for path in glob_files(cache / app_id, f'*/{name}'):
+                if is_file(path):
+                    return path
     return None
 
 
@@ -156,13 +160,18 @@ def steam_games(root):
             folder = inside(apps / 'common', install)
             if not folder or not is_directory(folder):
                 continue
+            hero = steam_art(root, app_id, 'library_hero_2x', 'library_hero')
             yield Game(
                 'Steam',
                 app_id,
                 title,
                 'steam://rungameid/' + app_id,
-                poster=steam_poster(root, app_id),
+                poster=steam_art(root, app_id, 'library_600x900'),
                 install_dir=folder,
+                fanart=hero,
+                fallback_fanart=(
+                    None if hero else steam_art(root, app_id, 'library_header_2x', 'library_header')
+                ),
             )
 
 
@@ -300,6 +309,8 @@ def merge_games(games):
                 icon=prior.icon or game.icon,
                 executable=prior.executable or game.executable,
                 install_dir=prior.install_dir or game.install_dir,
+                fanart=prior.fanart or game.fanart,
+                fallback_fanart=prior.fallback_fanart or game.fallback_fanart,
             )
         else:
             merged[game.key] = game

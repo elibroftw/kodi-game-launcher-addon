@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.game.installedgamelibrary" name="PC Game Library" version="0.4.1" provider-name="PC Game Library contributors">
+<addon id="plugin.game.installedgamelibrary" name="PC Game Library" version="0.8.6" provider-name="PC Game Library contributors">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
     </requires>

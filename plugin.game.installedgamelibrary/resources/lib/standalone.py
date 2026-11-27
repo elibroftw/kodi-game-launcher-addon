@@ -111,8 +111,8 @@ def plausible(path):
     )
 
 
-def local_poster(folder):
-    for stem in ('poster', 'cover'):
+def local_art(folder, *stems):
+    for stem in stems:
         for ext in ('.jpg', '.jpeg', '.png', '.webp'):
             path = folder / (stem + ext)
             if file(path):
@@ -174,7 +174,7 @@ def gog_game(folder, primary):
         game_id,
         title if isinstance(title, str) else folder.name,
         str(exe),
-        poster=local_poster(folder),
+        poster=local_art(folder, 'poster', 'cover'),
         executable=exe,
         install_dir=folder,
         working_dir=cwd,
@@ -271,7 +271,7 @@ def inspect_install(folder, entries, allow_unmarked, managed):
         identity,
         folder.name,
         str(exe),
-        poster=local_poster(folder),
+        poster=local_art(folder, 'poster', 'cover'),
         executable=exe,
         install_dir=folder,
         working_dir=exe.parent,

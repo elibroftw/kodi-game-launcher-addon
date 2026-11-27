@@ -12,9 +12,11 @@ import xbmcgui
 import xbmcplugin
 import xbmcvfs
 from resources.lib import catalog, history, windows
+from resources.lib.discovery import is_file
 
 NAME = 'PC Game Library'
 DEFAULT_ICON = 'DefaultAddonGame.png'
+BLANK_FANART = str(Path(__file__).parent / 'resources' / 'media' / 'blank-fanart.png')
 GAMES_WINDOW = 10821
 ESTUARY_POSTER_VIEW = 51
 HISTORY_FILE = 'last_launched.json'
@@ -63,35 +65,40 @@ def focus_initial_item(entry_count, listing_token):
             return
 
 
-def show_games(handle, base_url, snapshot):
-    listing_token = uuid4().hex
+def library_rows(snapshot):
     games = (
         history.order_games(snapshot.games, profile_directory() / HISTORY_FILE) if snapshot else ()
     )
-    rescan_url = base_url + '?index=manual'
-    rescan_menu = [('Rescan installed games', f'RunPlugin({rescan_url})')]
-    entries = []
     for key, (label, _) in TOOLS.items():
         item = xbmcgui.ListItem(label=label)
-        if not entries:
-            item.setProperty(LISTING_PROPERTY, listing_token)
         icon = snapshot.tool_icons.get(key, DEFAULT_ICON) if snapshot else DEFAULT_ICON
-        item.setArt({'thumb': icon, 'icon': icon, 'poster': icon})
-        item.addContextMenuItems(rescan_menu)
-        entries.append((base_url + '?' + urlencode({'tool': key}), item, False))
+        item.setArt({'thumb': icon, 'icon': icon, 'poster': icon, 'fanart': BLANK_FANART})
+        yield item, None, key
     for game in games:
         item = xbmcgui.ListItem(label=game.title, label2=game.launcher)
         image = game.image or DEFAULT_ICON
-        art = {'thumb': image, 'icon': image}
+        backdrop = game.fanart if game.fanart and is_file(Path(game.fanart)) else BLANK_FANART
+        art = {'thumb': image, 'icon': image, 'fanart': backdrop}
         if game.is_poster:
             art['poster'] = image
         item.setArt(art)
-        item.addContextMenuItems(rescan_menu)
-        url = base_url + '?' + urlencode({'game': game.key})
-        entries.append((url, item, False))
+        yield item, game.key, None
+
+
+def show_games(handle, base_url, snapshot):
+    listing_token = uuid4().hex
+    rescan_url = base_url + '?index=manual'
+    menu = [('Rescan installed games', f'RunPlugin({rescan_url})')]
+    entries = []
+    for item, game, tool in library_rows(snapshot):
+        if not entries:
+            item.setProperty(LISTING_PROPERTY, listing_token)
+        item.addContextMenuItems(menu)
+        params = {'tool': tool} if tool is not None else {'game': game}
+        entries.append((base_url + '?' + urlencode(params), item, False))
     if snapshot is None:
         item = xbmcgui.ListItem(label='Indexing installed games…')
-        item.setArt({'thumb': DEFAULT_ICON, 'icon': DEFAULT_ICON})
+        item.setArt({'thumb': DEFAULT_ICON, 'icon': DEFAULT_ICON, 'fanart': BLANK_FANART})
         entries.append((rescan_url, item, False))
     xbmcplugin.setPluginCategory(handle, NAME)
     xbmcplugin.setContent(handle, 'games')
