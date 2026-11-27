@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.game.installedgamelibrary" name="PC Game Library" version="0.4.1" provider-name="PC Game Library contributors">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0" />
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="addon.py">
+        <provides>game</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Launch Windows games from Kodi</summary>
+        <description lang="en_GB">Open launcher-managed games and standalone Windows installs from Kodi, or jump straight to Xbox or Game Bar.</description>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+    </extension>
+</addon>
