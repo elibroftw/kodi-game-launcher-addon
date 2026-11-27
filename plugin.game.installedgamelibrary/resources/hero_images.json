@@ -7,6 +7,12 @@
       "hero_url": "https://duneawakening.com/wp-content/uploads/Paralax-Background-2-1.jpg"
     },
     {
+      "title": "Dune: Spice Wars",
+      "aliases": ["Dune Spice Wars"],
+      "steam_app_id": "1605220",
+      "hero_url": "https://store-images.s-microsoft.com/image/apps.13598.13993061156496216.c5c83445-c83d-441f-8d79-a05fa134dcd7.fa11b3c9-0b58-49a3-ba97-1fe6290edf6a?q=90&w=480&h=270"
+    },
+    {
       "title": "Factorio",
       "steam_app_id": "427520",
       "hero_url": "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_2.0/store/software/switch/70010000056818/c700b4cc22a81c2099335d83fe379e9cdc6afd190a9985f74ba8f7e589f4ffd2"

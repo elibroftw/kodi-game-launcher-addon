@@ -555,7 +555,9 @@ class OnlineArtworkTests(unittest.TestCase):
             hero.url, 'https://duneawakening.com/wp-content/uploads/Paralax-Background-2-1.jpg'
         )
         self.assertEqual(hero_catalog.match(alias, heroes), hero)
-        self.assertIsNone(hero_catalog.match(spice_wars, heroes))
+        spice_wars_hero = hero_catalog.match(spice_wars, heroes)
+        self.assertNotEqual(spice_wars_hero, hero)
+        self.assertTrue(spice_wars_hero.url.startswith('https://store-images.s-microsoft.com/'))
         self.assertIsNone(hero_catalog.match(wrong_id, heroes))
 
     def test_curated_hero_is_downloaded_once_and_overrides_steam_art(self):

@@ -32,7 +32,7 @@ Using an AI agent is highly encouraged as it will auto build the plugin to be in
 uvx ruff check --fix
 uvx ruff format
 uv run --python 3.11 --no-project python -B -m unittest discover -s tests -v
-python -m zipfile -c plugin.game.installedgamelibrary-0.8.6.zip plugin.game.installedgamelibrary
+python -m zipfile -c plugin.game.installedgamelibrary-0.8.7.zip plugin.game.installedgamelibrary
 ```
 
 [Cyberpunk Neon Palette](https://www.color-hex.com/color-palette/61235) · [IGDB](https://www.igdb.com/) · GPT 6.2 Sol · pi agent · [video game artwork](https://hdqwalls.com/shadow-of-the-colossus-8k-wallpaper)
