@@ -18,7 +18,7 @@
 
 ## Install and use
 
-1. Download the add-on ZIP from Releases, not the source code ZIP.
+1. Download the add-on ZIP from [Releases](https://github.com/elibroftw/kodi-game-launcher-addon/releases), not the source code ZIP.
 2. In Kodi, choose **Add-ons → Install from zip file**. Enable **Unknown sources** if prompted.
 3. Open **Games → PC Game Library**. If Games is hidden in Estuary, enable it under **Settings → Interface → Skin → Configure skin → Main menu items**.
 
