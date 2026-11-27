@@ -16,7 +16,14 @@ from resources.lib.discovery import is_file
 
 NAME = 'PC Game Library'
 DEFAULT_ICON = 'DefaultAddonGame.png'
-BLANK_FANART = str(Path(__file__).parent / 'resources' / 'media' / 'blank-fanart.png')
+MEDIA_DIR = Path(__file__).parent / 'resources' / 'media'
+BLANK_FANART = str(MEDIA_DIR / 'blank-fanart.png')
+XBOX_LOGO = str(MEDIA_DIR / 'xbox-logo.png')
+XBOX_BACKDROP = str(MEDIA_DIR / 'xbox-backdrop.jpg')
+TOOL_POSTERS = {
+    'xbox': str(MEDIA_DIR / 'xbox-app-poster.jpg'),
+    'game-bar': str(MEDIA_DIR / 'xbox-game-bar-poster.jpg'),
+}
 GAMES_WINDOW = 10821
 ESTUARY_POSTER_VIEW = 51
 HISTORY_FILE = 'last_launched.json'
@@ -65,8 +72,8 @@ def focus_initial_item(entry_count, listing_token):
             return
 
 
-def backdrop_or_blank(path):
-    return path if path and is_file(Path(path)) else BLANK_FANART
+def artwork_or_fallback(path, fallback):
+    return path if path and is_file(Path(path)) else fallback
 
 
 def library_rows(snapshot):
@@ -74,17 +81,21 @@ def library_rows(snapshot):
         history.order_games(snapshot.games, profile_directory() / HISTORY_FILE) if snapshot else ()
     )
     tool_icons = snapshot.tool_icons if snapshot else {}
-    xbox_logo = tool_icons.get('xbox')
-    xbox_fanart = backdrop_or_blank(snapshot.xbox_fanart if snapshot else None)
+    xbox_logo = artwork_or_fallback(tool_icons.get('xbox'), XBOX_LOGO)
+    xbox_fanart = artwork_or_fallback(snapshot.xbox_fanart if snapshot else None, XBOX_BACKDROP)
     for key, (label, _) in TOOLS.items():
         item = xbmcgui.ListItem(label=label)
-        icon = xbox_logo or tool_icons.get(key, DEFAULT_ICON)
-        item.setArt({'thumb': icon, 'icon': icon, 'poster': icon, 'fanart': xbox_fanart})
+        poster = TOOL_POSTERS[key]
+        item.setArt({'thumb': poster, 'icon': xbox_logo, 'poster': poster, 'fanart': xbox_fanart})
         yield item, None, key
     for game in games:
         item = xbmcgui.ListItem(label=game.title, label2=game.launcher)
         image = game.image or DEFAULT_ICON
-        art = {'thumb': image, 'icon': image, 'fanart': backdrop_or_blank(game.fanart)}
+        art = {
+            'thumb': image,
+            'icon': image,
+            'fanart': artwork_or_fallback(game.fanart, BLANK_FANART),
+        }
         if game.is_poster:
             art['poster'] = image
         item.setArt(art)

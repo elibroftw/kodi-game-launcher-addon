@@ -822,7 +822,11 @@ class KodiTests(unittest.TestCase):
         self.modules['xbmcgui'].ListItem.side_effect = [xbox, game_bar]
         backdrop = self.profile / 'xbox-backdrop.jpg'
         backdrop.touch()
-        snapshot = catalog.Catalog((), {'xbox': 'xbox.png', 'game-bar': 'bar.png'}, str(backdrop))
+        installed_logo = self.profile / 'xbox.png'
+        installed_logo.touch()
+        snapshot = catalog.Catalog(
+            (), {'xbox': str(installed_logo), 'game-bar': 'bar.png'}, str(backdrop)
+        )
         with patch.object(self.addon, 'uuid4', return_value=SimpleNamespace(hex='new-listing')):
             self.addon.show_games(1, PLUGIN_URL, snapshot)
         self.modules['xbmcplugin'].setContent.assert_called_once_with(1, 'games')
@@ -830,12 +834,13 @@ class KodiTests(unittest.TestCase):
             xbmc.executebuiltin.call_args_list,
             [call('Container.SetViewMode(51)'), call('SetFocus(51,1,absolute)')],
         )
-        for tile in (xbox, game_bar):
+        for key, tile in (('xbox', xbox), ('game-bar', game_bar)):
+            poster = self.addon.TOOL_POSTERS[key]
             tile.setArt.assert_called_once_with(
                 {
-                    'icon': 'xbox.png',
-                    'thumb': 'xbox.png',
-                    'poster': 'xbox.png',
+                    'icon': str(installed_logo),
+                    'thumb': poster,
+                    'poster': poster,
                     'fanart': str(backdrop),
                 }
             )
@@ -843,13 +848,17 @@ class KodiTests(unittest.TestCase):
             [('Rescan installed games', f'RunPlugin({PLUGIN_URL}?index=manual)')]
         )
 
-    def test_game_bar_uses_its_own_icon_if_xbox_logo_is_unavailable(self):
+    def test_empty_xbox_art_cache_uses_bundled_logo_two_posters_and_backdrop(self):
         xbox, game_bar = Mock(), Mock()
         self.modules['xbmcgui'].ListItem.side_effect = [xbox, game_bar]
-        list(self.addon.library_rows(catalog.Catalog((), {'game-bar': 'bar.png'})))
-        self.assertEqual(xbox.setArt.call_args.args[0]['icon'], self.addon.DEFAULT_ICON)
-        self.assertEqual(game_bar.setArt.call_args.args[0]['icon'], 'bar.png')
-        self.assertEqual(game_bar.setArt.call_args.args[0]['fanart'], self.addon.BLANK_FANART)
+        snapshot = catalog.Catalog((), {'xbox': str(self.profile / 'missing-logo.png')})
+        list(self.addon.library_rows(snapshot))
+        for key, tile in (('xbox', xbox), ('game-bar', game_bar)):
+            art = tile.setArt.call_args.args[0]
+            self.assertEqual(art['icon'], self.addon.XBOX_LOGO)
+            self.assertEqual(art['poster'], self.addon.TOOL_POSTERS[key])
+            self.assertEqual(art['fanart'], self.addon.XBOX_BACKDROP)
+            self.assertTrue(all(Path(path).is_file() for path in art.values()))
 
     def test_cold_library_shows_indexing_tile_before_scheduling_background_scan(self):
         xbmc = self.modules['xbmc']

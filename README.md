@@ -1,6 +1,20 @@
-# PC Game Library for Kodi
+<p align="center">
+  <img src="plugin.game.installedgamelibrary/icon.png" alt="PC Game Library icon" width="112">
+</p>
 
-Find and launch Windows games from Kodi 19 or newer.
+<h1 align="center">PC Game Library for Kodi</h1>
+
+<p align="center">Find and launch your installed Windows games from Kodi 19 or newer.</p>
+
+<p align="center">
+  <a href="#install-and-use">Installation</a> ·
+  <a href="#what-it-finds">Supported games</a> ·
+  <a href="#development">Development</a>
+</p>
+
+<p align="center">
+  <img src="artwork/demo.gif" alt="Looping demo of opening PC Game Library and browsing games in Kodi" width="672">
+</p>
 
 ## Install and use
 
@@ -24,7 +38,7 @@ Custom backdrops live in [`hero_images.json`](plugin.game.installedgamelibrary/r
 
 Changes trigger a reindex. Portraits stay on the tiles, and missing backdrops are blank. In Estuary, enable **Configure skin → Artwork → Show media fanart as background** if needed.
 
-The Xbox and Game Bar tiles share the installed Xbox app’s logo and backdrop when available. Game Bar uses **Win+G**; try windowed mode if the overlay doesn’t appear.
+The Xbox app and Game Bar have separate Xbox-branded posters and a shared backdrop, with bundled artwork if Windows can’t supply the logo. Game Bar uses **Win+G**; try windowed mode if the overlay doesn’t appear.
 
 ## Development
 
@@ -34,7 +48,7 @@ Using an AI agent is highly encouraged as it will auto build the plugin to be in
 uvx ruff check --fix
 uvx ruff format
 uv run --python 3.11 --no-project python -B -m unittest discover -s tests -v
-python -m zipfile -c plugin.game.installedgamelibrary-0.10.0.zip plugin.game.installedgamelibrary
+python -m zipfile -c plugin.game.installedgamelibrary-0.10.1.zip plugin.game.installedgamelibrary
 ```
 
 [Local hero-image backup manifest](artwork/Game%20Hero%20Images/hero-image-backup.json) · [Cyberpunk Neon Palette](https://www.color-hex.com/color-palette/61235) · [IGDB](https://www.igdb.com/) · GPT 6.2 Sol · pi agent · [video game artwork](https://hdqwalls.com/shadow-of-the-colossus-8k-wallpaper)
